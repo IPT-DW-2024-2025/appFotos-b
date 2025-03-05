@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace appFotos.Data.DbModels;
 
 public class Compras
@@ -9,6 +11,10 @@ public class Compras
     public EstadosCompras Estado  { get; set; }
     
     public ICollection<Fotografias> ListaFotografias { get; set; }
+    
+    [ForeignKey(nameof(Comprador))]
+    public int CompradorId { get; set; }
+    public Utilizadores Comprador { get; set; }
 }
 
 public enum EstadosCompras

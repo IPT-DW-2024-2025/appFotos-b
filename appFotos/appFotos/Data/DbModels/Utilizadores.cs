@@ -19,4 +19,6 @@ public class Utilizadores
     public ICollection<Fotografias> ListaFotos { get; set; }
     
     public ICollection<Gostos> ListaGostos { get; set; }
+    
+    public ICollection<Compras> ListaCompras { get; set; }
 }
