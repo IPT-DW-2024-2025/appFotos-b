@@ -8,6 +8,7 @@ public class Compras
     
     public EstadosCompras Estado  { get; set; }
     
+    public ICollection<Fotografias> ListaFotografias { get; set; }
 }
 
 public enum EstadosCompras
