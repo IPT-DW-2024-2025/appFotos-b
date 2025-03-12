@@ -74,6 +74,9 @@ namespace appFotos.Controllers
             }
 
             var categorias = await _context.Categorias.FindAsync(id);
+            
+            HttpContext.Session.SetInt32("categoriaId", categorias.Id);
+            
             if (categorias == null)
             {
                 return NotFound();
@@ -91,6 +94,14 @@ namespace appFotos.Controllers
             if (id != categorias.Id)
             {
                 return NotFound();
+            }
+
+            var categoriaDaSessao = HttpContext.Session.GetInt32("categoriaId");
+
+            if (categoriaDaSessao != id)
+            {
+                ModelState.AddModelError("Id", "Tentaste aldrabar isto palhaço!");
+                return View(categorias);
             }
 
             if (ModelState.IsValid)
