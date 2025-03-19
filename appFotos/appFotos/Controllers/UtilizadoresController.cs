@@ -78,8 +78,8 @@ namespace appFotos.Controllers
             {
                 return NotFound();
             }
-            // guardamos em sessão o id da categoria que o utilizador quer editar
-            // se ele fizer um post para um Id diferente, ele está a tentar alterar algo que não devia
+            // guardamos em sessão o id do utilizador que o utilizador quer editar
+            // se ele fizer um post para um Id diferente, ele está a tentar alterar um utilizador diferente do que visualiza no ecrã
             HttpContext.Session.SetInt32("utilizadorId", utilizadores.Id);
             
             return View(utilizadores);
@@ -101,6 +101,7 @@ namespace appFotos.Controllers
             {
                 try
                 {
+                    // vou buscar o id do utilizador da sessão
                     var utilizadorDaSessao = HttpContext.Session.GetInt32("utilizadorId");
                     if (utilizadorDaSessao != id)
                     {
@@ -111,6 +112,7 @@ namespace appFotos.Controllers
                     
                     _context.Update(utilizadores);
                     await _context.SaveChangesAsync();
+                    // colocamos o utilizadorId da sessão a 0, para ele não poder fazer POSTs sucessivos 
                     HttpContext.Session.SetInt32("utilizadorId", 0);
                 }
                 catch (DbUpdateConcurrencyException)
