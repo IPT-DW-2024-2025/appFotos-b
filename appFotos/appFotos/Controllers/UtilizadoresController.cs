@@ -103,6 +103,8 @@ namespace appFotos.Controllers
                 {
                     // vou buscar o id do utilizador da sessão
                     var utilizadorDaSessao = HttpContext.Session.GetInt32("utilizadorId");
+                    // se o id do utilizador da sessão for diferente do que recebemos
+                    // quer dizer que está a tentar alterar um utilizador diferente do que tem no ecrã
                     if (utilizadorDaSessao != id)
                     {
                         ModelState.AddModelError("", "Tentaste aldrabar isto palhaço! Outra vez!!!");
