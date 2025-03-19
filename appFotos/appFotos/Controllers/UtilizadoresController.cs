@@ -147,6 +147,10 @@ namespace appFotos.Controllers
             {
                 return NotFound();
             }
+            
+            // guardamos em sessão o id do utilizador que o utilizador quer apagar
+            // se ele fizer um post para um Id diferente, ele está a tentar apagar um utilizador diferente do que visualiza no ecrã
+            HttpContext.Session.SetInt32("utilizadorId", utilizadores.Id);
 
             return View(utilizadores);
         }
@@ -159,10 +163,21 @@ namespace appFotos.Controllers
             var utilizadores = await _context.Utilizadores.FindAsync(id);
             if (utilizadores != null)
             {
+                // vou buscar o id do utilizador da sessão
+                var utilizadorDaSessao = HttpContext.Session.GetInt32("utilizadorId");
+                // se o id do utilizador da sessão for diferente do que recebemos
+                // quer dizer que está a tentar apagar um utilizador diferente do que tem no ecrã
+                if (utilizadorDaSessao != id)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                
                 _context.Utilizadores.Remove(utilizadores);
             }
 
             await _context.SaveChangesAsync();
+            // impede que tente fazer o apagar do mesmo utilizador
+            HttpContext.Session.SetInt32("utilizadorId",0);
             return RedirectToAction(nameof(Index));
         }
 
