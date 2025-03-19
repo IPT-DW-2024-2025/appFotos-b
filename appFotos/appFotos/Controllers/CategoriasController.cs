@@ -10,6 +10,9 @@ using appFotos.Models;
 
 namespace appFotos.Controllers
 {
+    /// <summary>
+    /// Controller responsável pelas categorias
+    /// </summary>
     public class CategoriasController : Controller
     {
         private readonly ApplicationDbContext _context;
