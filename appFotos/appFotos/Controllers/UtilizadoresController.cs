@@ -78,6 +78,10 @@ namespace appFotos.Controllers
             {
                 return NotFound();
             }
+            // guardamos em sessão o id da categoria que o utilizador quer editar
+            // se ele fizer um post para um Id diferente, ele está a tentar alterar algo que não devia
+            HttpContext.Session.SetInt32("utilizadorId", utilizadores.Id);
+            
             return View(utilizadores);
         }
 
@@ -86,7 +90,7 @@ namespace appFotos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,NIF,Telemovel,Morada,CodPostal,Pais")] Utilizadores utilizadores)
+        public async Task<IActionResult> Edit([FromRoute]int id, [Bind("Id,Nome,NIF,Telemovel,Morada,CodPostal,Pais")] Utilizadores utilizadores)
         {
             if (id != utilizadores.Id)
             {
@@ -97,8 +101,17 @@ namespace appFotos.Controllers
             {
                 try
                 {
+                    var utilizadorDaSessao = HttpContext.Session.GetInt32("utilizadorId");
+                    if (utilizadorDaSessao != id)
+                    {
+                        ModelState.AddModelError("", "Tentaste aldrabar isto palhaço! Outra vez!!!");
+                        return View(utilizadores);
+                    }
+                    
+                    
                     _context.Update(utilizadores);
                     await _context.SaveChangesAsync();
+                    HttpContext.Session.SetInt32("utilizadorId", 0);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
