@@ -22,11 +22,15 @@ public class Fotografias
     /// <summary>
     /// Título da fotografia
     /// </summary>
+    [Display(Name = "Título")]
+    [Required(ErrorMessage = "O {0} é de preenchimento obrigatório.")]
     public string Titulo { get; set; }
     
     /// <summary>
     /// Descrição da fotografia
     /// </summary>
+    [Display(Name = "Descrição")]
+    [Required(ErrorMessage = "A {0} é de preenchimento obrigatório.")]
     public string Descricao { get; set; }
     
     // <summary>
@@ -38,11 +42,13 @@ public class Fotografias
     /// <summary>
     /// Data em que a fotografia foi tirada
     /// </summary>
+    [Display(Name = "Data da Fotografia")]
     public DateTime DataFotografia { get; set; }
     
     /// <summary>
     /// Preço de venda da fotografia
     /// </summary>
+    [Display(Name = "Preço")]
     public decimal Preco { get; set; }
     
     
@@ -54,6 +60,7 @@ public class Fotografias
     /// <summary>
     /// FK para referenciar o Dono da fotografia
     /// </summary>
+    [Display(Name = "Dono")]
     [ForeignKey(nameof(Dono))]
     public int DonoFk { get; set; }
     
@@ -65,6 +72,7 @@ public class Fotografias
     /// <summary>
     /// FK para a tabela das Categorias
     /// </summary>
+    [Display(Name = "Categoria")]
     [ForeignKey(nameof(Categoria))]
     public int CategoriaFk { get; set; }
     
@@ -76,16 +84,16 @@ public class Fotografias
     
     // M-N
 
-    
+
     /// <summary>
     // /// Lista de 'gostos' de uma fotografia
     // /// </summary>
-    public ICollection<Gostos> ListaGostos { get; set; }
-    
+    public ICollection<Gostos> ListaGostos { get; set; } = [];
+
     /// <summary>
     /// Lista de 'compras' que compraram a fotografia
     /// </summary>
-    public ICollection<Compras> ListaCompras { get; set; }
-    
+    public ICollection<Compras> ListaCompras { get; set; } = [];
+
 }
 
