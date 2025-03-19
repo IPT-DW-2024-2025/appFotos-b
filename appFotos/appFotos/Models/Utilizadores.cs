@@ -24,6 +24,7 @@ public class Utilizadores
     /// número de identificação fiscal do utilizador 
     /// </summary>
     [Required(ErrorMessage = "O {0} é de preenchimento obrigatório.")] 
+    [RegularExpression("([1-9])[0-9]{8}", ErrorMessage = "O {0} tem de seguir o formato de Portugal.")] 
     public string NIF { get; set; }
     
     /// <summary>
@@ -31,6 +32,7 @@ public class Utilizadores
     /// </summary>
     [Display(Name = "Telemóvel")]
     [Required(ErrorMessage = "O {0} é de preenchimento obrigatório.")] 
+    [RegularExpression("([+]|00)?[0-9]{6,17}", ErrorMessage = "O {0} só pode conter digitos. No mínimo 6.")] 
     public string Telemovel { get; set; }
     
     /// <summary>
@@ -44,6 +46,7 @@ public class Utilizadores
     /// </summary>
     [Display(Name = "Código Postal")]
     [Required(ErrorMessage = "O {0} é de preenchimento obrigatório.")] 
+    [RegularExpression("[1-9][0-9]{3}[-|\\s][0-9]{3}", ErrorMessage = "O {0} tem de seguir o formato xxxx-xxx")] 
     public string CodPostal { get; set; }
     
     /// <summary>
