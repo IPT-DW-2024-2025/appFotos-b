@@ -34,7 +34,7 @@ namespace appFotos.Controllers
             }
 
             var categorias = await _context.Categorias
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(c => c.Id == id);
             if (categorias == null)
             {
                 return NotFound();
@@ -75,6 +75,8 @@ namespace appFotos.Controllers
 
             var categorias = await _context.Categorias.FindAsync(id);
             
+            // guardamos em sessão o id da categoria que o utilizador quer editar
+            // se ele fizer um post para um Id diferente, ele está a tentar alterar algo que não devia
             HttpContext.Session.SetInt32("categoriaId", categorias.Id);
             
             if (categorias == null)
@@ -89,8 +91,11 @@ namespace appFotos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Categoria")] Categorias categorias)
+        public async Task<IActionResult> Edit([FromRoute]int id, [Bind("Id,Categoria")] Categorias categorias)
         {
+            // adicionámos o [FromRoute] para ele ir buscar o id que vem na Rota
+            // ex: Edit/5 -> vai buscar o id=5
+            // sem o [FromRoute] ele vai buscar o Id que vem no Body
             if (id != categorias.Id)
             {
                 return NotFound();
@@ -103,13 +108,15 @@ namespace appFotos.Controllers
                 ModelState.AddModelError("Id", "Tentaste aldrabar isto palhaço!");
                 return View(categorias);
             }
-
+            
             if (ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(categorias);
                     await _context.SaveChangesAsync();
+                    
+                    HttpContext.Session.SetInt32("categoriaId", 0);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -124,6 +131,8 @@ namespace appFotos.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            
+            // se chegarmos aqui é porque algo correu mal
             return View(categorias);
         }
 

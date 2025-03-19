@@ -42,6 +42,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+// garante que a sessão é usada na aplicação
 app.UseSession();
 app.UseAuthorization();
 
