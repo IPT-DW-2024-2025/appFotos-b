@@ -68,46 +68,43 @@ namespace appFotos.Controllers
              * 3- se chegar aqui podemos guardar o ficheiro no disco, e a referência na BD
              */
             
-            ModelState.Remove("Categoria");
-            ModelState.Remove("Dono");
-            ModelState.Remove("Ficheiro");
-
             bool haImagem = false;
             var nomeImagem = "";
-
-            // se não recebermos nenhum ficheiro, enviamos ao user um erro a dizer que tem de submeter um
-            if (ficheiroFotografia == null)
-            {
-                ModelState.AddModelError("", "Tem de submeter um ficheiro");
-            }
-            // se entrar no else foi submetido um ficheiro
-            else
-            {
-                // há ficheiro, mas é uma imagem?
-                if (!(ficheiroFotografia.ContentType == "image/png" ||
-                      ficheiroFotografia.ContentType == "image/jpeg"
-                    )) {
-                    // não
-                    // vamos usar uma imagem pre-definida
-                    fotografias.Ficheiro = "example.png";
-                }
-                // se chegar aqui é um ficheiro & uma imagem
-                else
-                {
-                    haImagem = true;
-                    // gerar nome imagem
-                    Guid g = Guid.NewGuid();
-                    // atrás do nome adicionamos a pasta onde a escrevemos
-                    nomeImagem = "imagens/"+g.ToString();
-                    string extensaoImagem =Path.GetExtension(ficheiroFotografia.FileName).ToLowerInvariant();
-                    nomeImagem += extensaoImagem;
-                    // guardar o nome do ficheiro na BD
-                    fotografias.Ficheiro = nomeImagem;
-                }
-            }
             
+            // apenas vamos olhar para o ficheiro enviado pelo utilizador, se o resto dos campos estiverem oK
             if (ModelState.IsValid)
             {
+                // se não recebermos nenhum ficheiro, enviamos ao user um erro a dizer que tem de submeter um
+                if (ficheiroFotografia == null)
+                {
+                    ModelState.AddModelError("", "Tem de submeter um ficheiro");
+                }
+                // se entrar no else foi submetido um ficheiro
+                else
+                {
+                    // há ficheiro, mas é uma imagem?
+                    if (!(ficheiroFotografia.ContentType == "image/png" ||
+                          ficheiroFotografia.ContentType == "image/jpeg"
+                        )) {
+                        // não
+                        // vamos usar uma imagem pre-definida
+                        fotografias.Ficheiro = "example.png";
+                    }
+                    // se chegar aqui é um ficheiro & uma imagem
+                    else
+                    {
+                        haImagem = true;
+                        // gerar nome imagem
+                        Guid g = Guid.NewGuid();
+                        // atrás do nome adicionamos a pasta onde a escrevemos
+                        nomeImagem = "imagens/"+g.ToString();
+                        string extensaoImagem =Path.GetExtension(ficheiroFotografia.FileName).ToLowerInvariant();
+                        nomeImagem += extensaoImagem;
+                        // guardar o nome do ficheiro na BD
+                        fotografias.Ficheiro = nomeImagem;
+                    }
+                }
+                
                 // se existe uma imagem para escrever no disco
                 if (haImagem)
                 {
