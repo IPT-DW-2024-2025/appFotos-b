@@ -95,19 +95,27 @@ namespace appFotos.Controllers
                     // gerar nome imagem
                     Guid g = Guid.NewGuid();
                     // atrás do nome adicionamos a pasta onde a escrevemos
-                    nomeImagem = "imagens/"+g.ToString();
+                    nomeImagem = g.ToString();
                     string extensaoImagem =Path.GetExtension(ficheiroFotografia.FileName).ToLowerInvariant();
                     nomeImagem += extensaoImagem;
                     // guardar o nome do ficheiro na BD
-                    fotografias.Ficheiro = nomeImagem;
+                    fotografias.Ficheiro = "imagens/"+nomeImagem;
                 }
                 
                 
                 // se existe uma imagem para escrever no disco
                 if (haImagem)
                 {
-                    // vai construir o path para escrever a imagem
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot", nomeImagem);
+                    // vai construir o path para o diretório onde são guardadas as imagens
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/imagens");
+                    
+                    // antes de escrevermos o ficheiro, vemos se o diretório existe
+                    if(!Directory.Exists(filePath))
+                        Directory.CreateDirectory(filePath);
+                    
+                    // atualizamos o Path para incluir o nome da imagem
+                    filePath = Path.Combine(filePath, nomeImagem);
+                    
                     // escreve a imagem
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
