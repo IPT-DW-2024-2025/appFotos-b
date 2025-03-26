@@ -50,8 +50,17 @@ public class Fotografias
     /// <summary>
     /// Preço de venda da fotografia
     /// </summary>
-    [Display(Name = "Preço")]
     public decimal Preco { get; set; }
+    
+    /// <summary>
+    /// Variável auxiliar usada para validar o preço inserido pelo utilizador
+    /// </summary>
+    [Required(ErrorMessage = "A {0} é de preenchimento obrigatório.")] 
+    [Display(Name = "Preço")] 
+    [StringLength(9)] 
+    [RegularExpression("[0-9]{1,6}([,.][0-9]{1,2})?", ErrorMessage = "Escreva um número com, no máximo 2 casas decimais, separadas por . ou ,")] 
+    [NotMapped]
+    public string PrecoAux { get; set; }
     
     
     /* *************************
