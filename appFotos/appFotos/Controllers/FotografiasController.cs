@@ -56,7 +56,7 @@ namespace appFotos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Titulo,Descricao,DataFotografia,Preco,DonoFk,CategoriaFk")] Fotografias fotografias, IFormFile ficheiroFotografia)
+        public async Task<IActionResult> Create([Bind("Titulo,Descricao,DataFotografia,Preco,DonoFk,CategoriaFk")] Fotografias fotografias, IFormFile ficheiroFotografia)
         {
             /*
              * 1- validar se o ficheiro vem a null
