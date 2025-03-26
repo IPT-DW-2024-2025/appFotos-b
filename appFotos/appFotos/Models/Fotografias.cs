@@ -43,6 +43,8 @@ public class Fotografias
     /// Data em que a fotografia foi tirada
     /// </summary>
     [Display(Name = "Data da Fotografia")]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)] 
+    [DataType(DataType.Date)] 
     public DateTime DataFotografia { get; set; }
     
     /// <summary>
