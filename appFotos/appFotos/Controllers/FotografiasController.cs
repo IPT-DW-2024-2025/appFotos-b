@@ -172,6 +172,8 @@ namespace appFotos.Controllers
             {
                 return NotFound();
             }
+            
+            fotografia.PrecoAux = fotografia.Preco.ToString();
             ViewData["CategoriaFk"] = new SelectList(_context.Categorias, "Id", "Categoria", fotografia.CategoriaFk);
             ViewData["DonoFk"] = new SelectList(_context.Utilizadores, "Id", "Nome", fotografia.DonoFk);
             return View(fotografia);
@@ -182,15 +184,18 @@ namespace appFotos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Titulo,Descricao,Ficheiro,DataFotografia,Preco,DonoFk,CategoriaFk")] Fotografias fotografia)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Titulo,Descricao,PrecoAux,DataFotografia,DonoFk,CategoriaFk")] Fotografias fotografia)
         {
             if (id != fotografia.Id)
             {
                 return NotFound();
             }
-
+            
             if (ModelState.IsValid)
             {
+                fotografia.Preco = Convert.ToDecimal(fotografia.PrecoAux.Replace('.', ','),  
+                    new CultureInfo("pt-PT"));
+                
                 try
                 {
                     _context.Update(fotografia);

@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -25,7 +25,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Ficheiro" class="control-label"></label>
-                <input asp-for="Ficheiro" class="form-control" />
+                <input type="file" name="ficheiroFotografia" class="form-control" />
                 <span asp-validation-for="Ficheiro" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -34,9 +34,9 @@
                 <span asp-validation-for="DataFotografia" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Preco" class="control-label"></label>
-                <input asp-for="Preco" class="form-control" />
-                <span asp-validation-for="Preco" class="text-danger"></span>
+                <label asp-for="PrecoAux" class="control-label"></label>
+                <input asp-for="PrecoAux" class="form-control" />
+                <span asp-validation-for="PrecoAux" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DonoFk" class="control-label"></label>
