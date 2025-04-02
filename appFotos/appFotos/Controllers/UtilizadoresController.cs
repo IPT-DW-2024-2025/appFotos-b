@@ -33,14 +33,15 @@ namespace appFotos.Controllers
                 return NotFound();
             }
 
-            var utilizadores = await _context.Utilizadores
+            var utilizador = await _context.Utilizadores
+                .Include(u=>u.ListaFotos)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (utilizadores == null)
+            if (utilizador == null)
             {
                 return NotFound();
             }
 
-            return View(utilizadores);
+            return View(utilizador);
         }
 
         // GET: Utilizadores/Create
