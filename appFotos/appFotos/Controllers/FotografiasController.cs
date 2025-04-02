@@ -80,6 +80,21 @@ namespace appFotos.Controllers
             bool haImagem = false;
             var nomeImagem = "";
             
+            // validação de FKs
+            var utilizador = _context.Utilizadores
+                .Where(u => u.Id==fotografia.DonoFk);
+
+            if (!utilizador.Any())
+            {
+                ModelState.AddModelError("DonoFk", "Tem de selecionar um Dono correto");
+            }
+
+            var categoria = _context.Categorias.FirstOrDefaultAsync(c => c.Id == fotografia.CategoriaFk);
+            if (categoria.Result == null)
+            {
+                ModelState.AddModelError("CategoriaFk", "Tem de selecionar uma Categoria correta");
+            }
+            
             // se não recebermos nenhum ficheiro, enviamos ao user um erro a dizer que tem de submeter um
             if (ficheiroFotografia == null)
             {
