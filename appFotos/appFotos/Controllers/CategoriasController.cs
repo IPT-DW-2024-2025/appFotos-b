@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using appFotos.Data;
 using appFotos.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace appFotos.Controllers
 {
@@ -47,6 +48,7 @@ namespace appFotos.Controllers
         }
 
         // GET: Categorias/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -57,6 +59,7 @@ namespace appFotos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("Id,Categoria")] Categorias categorias)
         {
             if (ModelState.IsValid)
@@ -69,6 +72,7 @@ namespace appFotos.Controllers
         }
 
         // GET: Categorias/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -94,6 +98,7 @@ namespace appFotos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit([FromRoute]int id, [Bind("Id,Categoria")] Categorias categorias)
         {
             // adicionámos o [FromRoute] para ele ir buscar o id que vem na Rota
@@ -140,6 +145,7 @@ namespace appFotos.Controllers
         }
 
         // GET: Categorias/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -160,6 +166,7 @@ namespace appFotos.Controllers
         // POST: Categorias/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var categorias = await _context.Categorias.FindAsync(id);

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using appFotos.Data;
 using appFotos.Models;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace appFotos.Controllers
@@ -53,10 +54,11 @@ namespace appFotos.Controllers
         }
 
         // GET: Fotografias/Create
+        [Authorize]
         public IActionResult Create()
         {
             ViewData["CategoriaFk"] = new SelectList(_context.Categorias, "Id", "Categoria");
-            ViewData["DonoFk"] = new SelectList(_context.Utilizadores, "Id", "Nome");
+            // ViewData["DonoFk"] = new SelectList(_context.Utilizadores, "Id", "Nome");
             return View();
         }
 
@@ -65,7 +67,9 @@ namespace appFotos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Titulo,Descricao,DataFotografia,PrecoAux,DonoFk,CategoriaFk")] Fotografias fotografia, IFormFile ficheiroFotografia)
+        public async Task<IActionResult> Create(
+            [Bind("Titulo,Descricao,DataFotografia,PrecoAux,DonoFk,CategoriaFk")] Fotografias fotografia,
+            IFormFile ficheiroFotografia)
         {
             /*
              * 1- validar se o ficheiro vem a null
@@ -73,44 +77,52 @@ namespace appFotos.Controllers
              *
              * 2- validar se o ficheiro é uma foto válida
              *  se for inválido enviamos um erro
-             * 
+             *
              * 3- se chegar aqui podemos guardar o ficheiro no disco, e a referência na BD
              */
-            
+
             bool haImagem = false;
             var nomeImagem = "";
-            
+
+            Utilizadores utilizadorDono = _context.Utilizadores
+                .Where(x => x.IdentityUserName == User.Identity.Name)
+                .FirstOrDefault();
+
+            fotografia.Dono = utilizadorDono; 
+
             // validação de FKs
+            /*
             var utilizador = _context.Utilizadores
                 .Where(u => u.Id==fotografia.DonoFk);
 
             if (!utilizador.Any())
             {
-                ModelState.AddModelError("DonoFk", "Tem de selecionar um Dono correto");
+                ModelState.AddModelError("", "Tem de selecionar um Dono correto");
             }
-
+            */
             var categoria = _context.Categorias.FirstOrDefaultAsync(c => c.Id == fotografia.CategoriaFk);
             if (categoria.Result == null)
             {
                 ModelState.AddModelError("CategoriaFk", "Tem de selecionar uma Categoria correta");
             }
-            
+
             // se não recebermos nenhum ficheiro, enviamos ao user um erro a dizer que tem de submeter um
             if (ficheiroFotografia == null)
             {
                 ModelState.AddModelError("", "Tem de submeter um ficheiro");
             }
-            
+
             if (ModelState.IsValid)
             {
-                fotografia.Preco = Convert.ToDecimal(fotografia.PrecoAux.Replace('.', ','),  
+                fotografia.Preco = Convert.ToDecimal(fotografia.PrecoAux.Replace('.', ','),
                     new CultureInfo("pt-PT"));
-                
+
                 // se entrar no else foi submetido um ficheiro
                 // há ficheiro, mas é uma imagem?
                 if (!(ficheiroFotografia.ContentType == "image/png" ||
                       ficheiroFotografia.ContentType == "image/jpeg"
-                    )) {
+                    ))
+                {
                     // não
                     // vamos usar uma imagem pre-definida
                     fotografia.Ficheiro = "example.png";
@@ -123,43 +135,45 @@ namespace appFotos.Controllers
                     Guid g = Guid.NewGuid();
                     // atrás do nome adicionamos a pasta onde a escrevemos
                     nomeImagem = g.ToString();
-                    string extensaoImagem =Path.GetExtension(ficheiroFotografia.FileName).ToLowerInvariant();
+                    string extensaoImagem = Path.GetExtension(ficheiroFotografia.FileName).ToLowerInvariant();
                     nomeImagem += extensaoImagem;
                     // guardar o nome do ficheiro na BD
-                    fotografia.Ficheiro = "imagens/"+nomeImagem;
+                    fotografia.Ficheiro = "imagens/" + nomeImagem;
                 }
-                
-                
+
+
                 // se existe uma imagem para escrever no disco
                 if (haImagem)
                 {
                     // vai construir o path para o diretório onde são guardadas as imagens
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/imagens");
-                    
+
                     // antes de escrevermos o ficheiro, vemos se o diretório existe
-                    if(!Directory.Exists(filePath))
+                    if (!Directory.Exists(filePath))
                         Directory.CreateDirectory(filePath);
-                    
+
                     // atualizamos o Path para incluir o nome da imagem
                     filePath = Path.Combine(filePath, nomeImagem);
-                    
+
                     // escreve a imagem
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
                         await ficheiroFotografia.CopyToAsync(fileStream);
                     }
                 }
-                
+
                 _context.Add(fotografia);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["CategoriaFk"] = new SelectList(_context.Categorias, "Id", "Categoria", fotografia.CategoriaFk);
-            ViewData["DonoFk"] = new SelectList(_context.Utilizadores, "Id", "Nome", fotografia.DonoFk);
+            //ViewData["DonoFk"] = new SelectList(_context.Utilizadores, "Id", "Nome", fotografia.DonoFk);
             return View(fotografia);
         }
 
         // GET: Fotografias/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -167,15 +181,24 @@ namespace appFotos.Controllers
                 return NotFound();
             }
 
-            var fotografia = await _context.Fotografias.FindAsync(id);
+            var fotografia =  _context.Fotografias
+                .Include(f => f.Dono)
+                .FirstOrDefault(f => f.Id == id);
+            
             if (fotografia == null)
             {
                 return NotFound();
             }
-            
+
+
+            if (fotografia.Dono.IdentityUserName != User.Identity.Name)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             fotografia.PrecoAux = fotografia.Preco.ToString();
             ViewData["CategoriaFk"] = new SelectList(_context.Categorias, "Id", "Categoria", fotografia.CategoriaFk);
-            ViewData["DonoFk"] = new SelectList(_context.Utilizadores, "Id", "Nome", fotografia.DonoFk);
+            //ViewData["DonoFk"] = new SelectList(_context.Utilizadores, "Id", "Nome", fotografia.DonoFk);
             return View(fotografia);
         }
 
@@ -184,18 +207,20 @@ namespace appFotos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Titulo,Descricao,PrecoAux,DataFotografia,DonoFk,CategoriaFk")] Fotografias fotografia)
+        [Authorize]
+        public async Task<IActionResult> Edit(int id,
+            [Bind("Id,Titulo,Descricao,PrecoAux,DataFotografia,DonoFk,CategoriaFk")] Fotografias fotografia)
         {
             if (id != fotografia.Id)
             {
                 return NotFound();
             }
-            
+
             if (ModelState.IsValid)
             {
-                fotografia.Preco = Convert.ToDecimal(fotografia.PrecoAux.Replace('.', ','),  
+                fotografia.Preco = Convert.ToDecimal(fotografia.PrecoAux.Replace('.', ','),
                     new CultureInfo("pt-PT"));
-                
+
                 try
                 {
                     _context.Update(fotografia);
@@ -212,14 +237,17 @@ namespace appFotos.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["CategoriaFk"] = new SelectList(_context.Categorias, "Id", "Categoria", fotografia.CategoriaFk);
-            ViewData["DonoFk"] = new SelectList(_context.Utilizadores, "Id", "CodPostal", fotografia.DonoFk);
+            //ViewData["DonoFk"] = new SelectList(_context.Utilizadores, "Id", "CodPostal", fotografia.DonoFk);
             return View(fotografia);
         }
 
         // GET: Fotografias/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -242,6 +270,7 @@ namespace appFotos.Controllers
         // POST: Fotografias/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var fotografia = await _context.Fotografias.FindAsync(id);
@@ -255,7 +284,7 @@ namespace appFotos.Controllers
                     if (System.IO.File.Exists(filePath))
                         System.IO.File.Delete(filePath);
                 }
-               
+
                 _context.Fotografias.Remove(fotografia);
             }
 

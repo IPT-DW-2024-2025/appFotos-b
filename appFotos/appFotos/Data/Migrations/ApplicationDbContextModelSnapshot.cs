@@ -29,7 +29,7 @@ namespace appFotos.Data.Migrations
 
                     b.HasIndex("ListaFotografiasId");
 
-                    b.ToTable("ComprasFotografias", (string)null);
+                    b.ToTable("ComprasFotografias");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -241,7 +241,7 @@ namespace appFotos.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categorias", (string)null);
+                    b.ToTable("Categorias");
                 });
 
             modelBuilder.Entity("appFotos.Models.Compras", b =>
@@ -263,7 +263,7 @@ namespace appFotos.Data.Migrations
 
                     b.HasIndex("CompradorId");
 
-                    b.ToTable("Compras", (string)null);
+                    b.ToTable("Compras");
                 });
 
             modelBuilder.Entity("appFotos.Models.Fotografias", b =>
@@ -286,7 +286,6 @@ namespace appFotos.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Ficheiro")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Preco")
@@ -302,7 +301,7 @@ namespace appFotos.Data.Migrations
 
                     b.HasIndex("DonoFk");
 
-                    b.ToTable("Fotografias", (string)null);
+                    b.ToTable("Fotografias");
                 });
 
             modelBuilder.Entity("appFotos.Models.Gostos", b =>
@@ -320,7 +319,7 @@ namespace appFotos.Data.Migrations
 
                     b.HasIndex("FotografiaFk");
 
-                    b.ToTable("Gostos", (string)null);
+                    b.ToTable("Gostos");
                 });
 
             modelBuilder.Entity("appFotos.Models.Utilizadores", b =>
@@ -330,11 +329,13 @@ namespace appFotos.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("CodPostal")
-                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IdentityUserName")
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Morada")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NIF")
@@ -354,7 +355,7 @@ namespace appFotos.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Utilizadores", (string)null);
+                    b.ToTable("Utilizadores");
                 });
 
             modelBuilder.Entity("ComprasFotografias", b =>
