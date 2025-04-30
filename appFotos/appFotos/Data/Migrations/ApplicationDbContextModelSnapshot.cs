@@ -29,7 +29,7 @@ namespace appFotos.Data.Migrations
 
                     b.HasIndex("ListaFotografiasId");
 
-                    b.ToTable("ComprasFotografias");
+                    b.ToTable("ComprasFotografias", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -274,7 +274,7 @@ namespace appFotos.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categorias");
+                    b.ToTable("Categorias", (string)null);
                 });
 
             modelBuilder.Entity("appFotos.Models.Compras", b =>
@@ -296,7 +296,7 @@ namespace appFotos.Data.Migrations
 
                     b.HasIndex("CompradorId");
 
-                    b.ToTable("Compras");
+                    b.ToTable("Compras", (string)null);
                 });
 
             modelBuilder.Entity("appFotos.Models.Fotografias", b =>
@@ -334,7 +334,7 @@ namespace appFotos.Data.Migrations
 
                     b.HasIndex("DonoFk");
 
-                    b.ToTable("Fotografias");
+                    b.ToTable("Fotografias", (string)null);
                 });
 
             modelBuilder.Entity("appFotos.Models.Gostos", b =>
@@ -352,7 +352,7 @@ namespace appFotos.Data.Migrations
 
                     b.HasIndex("FotografiaFk");
 
-                    b.ToTable("Gostos");
+                    b.ToTable("Gostos", (string)null);
                 });
 
             modelBuilder.Entity("appFotos.Models.Utilizadores", b =>
@@ -388,7 +388,7 @@ namespace appFotos.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Utilizadores");
+                    b.ToTable("Utilizadores", (string)null);
                 });
 
             modelBuilder.Entity("ComprasFotografias", b =>
