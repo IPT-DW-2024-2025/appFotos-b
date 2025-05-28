@@ -22,6 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Controllers\api\" />
       <Folder Include="wwwroot\imagens\" />
     </ItemGroup>
 
