@@ -1,8 +1,10 @@
+using System.Reflection;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using appFotos.Data;
 using appFotos.Data.DbInitializerDev;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,7 +40,20 @@ builder.Services.AddControllers()
 // add swagger
 // https://learn.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-swashbuckle?view=aspnetcore-8.0&tabs=visual-studio
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1",new OpenApiInfo {
+        Title="Minha API de gestão de Fotos",
+        Version="v1",
+        Description="API para gestão de categorias, fotografias e utilizadores"
+    });
+
+    // Caminho para o XML gerado
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory,xmlFile);
+    options.IncludeXmlComments(xmlPath);
+
+});
 
 
 var app = builder.Build();
