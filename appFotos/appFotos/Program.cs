@@ -35,6 +35,12 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler=ReferenceHandler.IgnoreCycles);
 
+// add swagger
+// https://learn.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-swashbuckle?view=aspnetcore-8.0&tabs=visual-studio
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -42,6 +48,10 @@ if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
     app.UseItToSeedSqlServer();
+    
+    // cria o swagger
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 else
 {

@@ -1,5 +1,6 @@
 using appFotos.Areas.Identity.Pages.Account;
 using appFotos.Models.ApiModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,7 @@ namespace appFotos.Controllers.api
 
         [HttpGet]
         [Route("hello")]
+        [Authorize]
         public ActionResult Hello()
         {
             return Ok("Hello");
