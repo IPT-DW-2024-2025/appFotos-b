@@ -43,7 +43,12 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            <p id=@("foto"+item.Id)>@item.ListaGostos.Count()</p>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <button onclick="updateGosto(@item.Id)" class="form-control">UpdateLike</button>
+            }
+            
+            <p id=@("foto" + item.Id)>@item.ListaGostos.Count()</p>
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Titulo)
@@ -86,8 +91,14 @@
         try {
             await connection.start();
 
+            /*
             connection.on("OnConnectedAsync", (msg) => {
                 alert(msg);
+            });
+            */
+
+            connection.on("AtualizarGostos", (idFoto, numGostos) => {
+                document.getElementById("foto" + idFoto).innerHTML = numGostos;
             });
             
             console.log("SignalR Connected.");
@@ -96,6 +107,10 @@
             setTimeout(start, 5000);
         }
     };
+    
+    function updateGosto(idFoto){
+        connection.invoke("AtualizarGostos", idFoto);
+    }
     
     // Start the connection.
     start();
