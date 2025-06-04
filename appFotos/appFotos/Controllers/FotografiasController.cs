@@ -29,7 +29,8 @@ namespace appFotos.Controllers
 
             var listaFotografias = _context.Fotografias
                 .Include(f => f.Categoria)
-                .Include(f => f.Dono);
+                .Include(f => f.Dono)
+                .Include(f => f.ListaGostos);
             return View(await listaFotografias.ToListAsync());
         }
 

@@ -13,6 +13,9 @@
     <thead>
         <tr>
             <th>
+                @Html.DisplayNameFor(model => model.ListaGostos)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Titulo)
             </th>
             <th>
@@ -38,34 +41,62 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Titulo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Descricao)
-            </td>
-            <td>
-                <img style="max-width: 400px;" src="/imagens/@item.Ficheiro" />
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataFotografia)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Preco)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Dono.Nome)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Categoria.Categoria)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+    <tr>
+        <td>
+            <p id=@("foto"+item.Id)>@item.ListaGostos.Count()</p>
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Titulo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Descricao)
+        </td>
+        <td>
+            <img style="max-width: 400px;" src="/imagens/@item.Ficheiro"/>
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DataFotografia)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Preco)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Dono.Nome)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Categoria.Categoria)
+        </td>
+        <td>
+            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+        </td>
+    </tr>
 }
     </tbody>
 </table>
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/gostosSocket")
+        .withAutomaticReconnect()
+        .configureLogging(signalR.LogLevel.Information)
+        .build();
+
+    async function start() {
+        try {
+            await connection.start();
+
+            connection.on("OnConnectedAsync", (msg) => {
+                alert(msg);
+            });
+            
+            console.log("SignalR Connected.");
+        } catch (err) {
+            console.log(err);
+            setTimeout(start, 5000);
+        }
+    };
+    
+    // Start the connection.
+    start();
+</script>
